@@ -1,77 +1,99 @@
 <template>
   <div>
     <Topbar :url="userAvatar" :name="userName + ' ' + userLastName" />
-    <TheSideNav />
-    <div class="contentArea">
-      <div class="mapArea">
-        <Map />
+    <div v-if="acessLocation" class="contentArea">
+      <div v-if="locationsLoaded">
+          <Map :locationsList="locationsLoaded" :actualLat="lat" :actualLng="lng" />
+          <List :locationsList="locationsLoaded" />
       </div>
-      <div class="listArea">
-        <List />
-      </div>
+      <div class="loading" v-else>
+        <img src="~/assets/img/spinner.gif" />
+        <div>
+          Carregando. Isso pode levar alguns minutos.
+        </div>
+    </div>
+    </div>
+    <div class="loading" v-else>
+        <div>
+          A aplicação requer que você forneça a sua localização. 
+          Se você tiver habilitado manualente, 
+          <a href="/profile" style="color: blue;">clique aqui</a>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
-import Topbar from "~/components/Topbar.vue";
-import TheSideNav from "~/components/TheSideNav.vue";
-import Map from "~/components/Map.vue";
-import List from "~/components/List.vue";
-
 export default {
   data() {
     return {
-      userEmail: "",
       userName: "",
       userLastName: "",
       userAvatar: "",
+      lat: "",
+      lng: "",
+      acessLocation: false
     };
   },
   methods: {
     async getData() {
       const data = await this.$axios.get("/users/2").then((response) => {
         return {
-          userEmail: response.data.data.email,
           userName: response.data.data.first_name,
           userLastName: response.data.data.last_name,
           userAvatar: response.data.data.avatar,
         };
       });
-      this.userEmail = data.userEmail;
       this.userName = data.userName;
       this.userLastName = data.userLastName;
       this.userAvatar = data.userAvatar;
     },
+    async getLocations() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          this.acessLocation = true;
+          this.lat = position.coords.latitude;
+          this.lng = position.coords.longitude;
+          this.$store.dispatch("locations/GETLOCATIONS", {
+            userLat: this.lat,
+            userLng: this.lng,
+          });
+        });
+      }
+    },
   },
   created() {
     this.getData();
+    this.getLocations();
+  },
+  computed: {
+    locationsLoaded() {
+      return this.$store.getters["locations/geoLocations"];
+    }
   },
 };
 </script>
 
 <style scoped>
-.contentArea{
-  display: flex;
+.contentArea > div {
+    width: 100%;
+    display: flex;
 }
-.mapArea {
+.loading {
   width: 100%;
   height: calc(100vh - 111px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
-.mapArea > div{
-  height: calc(100%);
+.loading div {
+  text-align: center;
+  max-width: 300px;
+  margin-top: 1rem;
 }
-.listArea{
-  height: calc(100vh - 111px);
-  overflow-y: scroll;
-  width: 40%;
-}
-.GMap__Wrapper, .GMap__Wrapper > div, .GMap {
-    height: 100% !important;
-}
-
-@media(max-width: 767px){
-  .listArea{
+@media(min-width: 768px){
+  .sidenav-container{
     display: none;
   }
 }

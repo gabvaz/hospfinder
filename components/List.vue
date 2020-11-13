@@ -1,5 +1,5 @@
 <template>
-  <div v-if="placesLoad" class="listSide">
+  <div class="listSide" :class="isOpen">
     <div class="listHeader">
       <div class="listLogo">
           <img src="~/assets/img/hospital.png" alt="hospital-icon" />
@@ -13,7 +13,7 @@
     <div class="locationsList" :class="filter">
       <div v-if="favCount <= 0" class="hasFav">Você ainda não tem favoritos :(</div>
       <div
-        v-for="location in locations"
+        v-for="location in locationsList"
         :key="location.place_id + 'loop'"
         class="listItem"
         @click="handleModal(location)"
@@ -39,16 +39,17 @@ export default {
     return {
       selectedLocation: {},
       modal: false,
-      placesLoad: false,
-      currentLocation: {},
-      locationsVisibleOnMap: "",
-      userLat: "",
-      userLng: "",
-      locations: [],
+      locations: this.locationsList,
       userFav: [],
       filter: "all",
       filterActive: true
     };
+  },
+  props: {
+    locationsList: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
     filterLocations(payload){
@@ -63,19 +64,6 @@ export default {
       this.modal = !this.modal;
       this.selectedLocation = location;
     },
-    getPlaces() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-          this.userLat = position.coords.latitude;
-          this.userLng = position.coords.longitude;
-          const response = await this.$axios.get(
-            `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${position.coords.latitude.toString()},${position.coords.longitude.toString()}&radius=25000&type=hospital&key=AIzaSyAZN6B6vvnFIUT7ySIbOVjsOuiCVXtbh6M`
-          );
-          this.locations = [...response.data.results];
-          this.placesLoad = true;
-        });
-      }
-    },
     checkLocal() {
       if (this.$auth.$storage.getLocalStorage("FAV")) {
         this.userFav = this.$auth.$storage.getLocalStorage("FAV");
@@ -83,18 +71,39 @@ export default {
     },
   },
   mounted() {
-    this.getPlaces();
     this.checkLocal();
   },
   computed: {
     favCount(){
       return this.userFav.length
+    },
+    isOpen() {
+      return this.$store.getters["nav/toggleSidebar"];
     }
   }
 };
 </script>
 
 <style>
+@media (max-width: 767px) {
+  div.listSide{
+    width: 100%;
+    position: absolute;
+    left: 0;
+  }
+  .listSide.open{
+    transform: translateX(0%);
+  }
+  .listSide.closed{
+    transform: translateX(-100%);
+  }
+}
+.listSide {
+  height: calc(100vh - 111px);
+  overflow-y: scroll;
+  width: 40%;
+  background: white;
+}
 .locationsList {
   display: flex;
   flex-direction: column;

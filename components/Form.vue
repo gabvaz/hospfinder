@@ -2,7 +2,7 @@
   <section class="form_login">
     <div class="form_area">
       <div class="form_title" v-if="login">
-        <p>Faça seu login</p>
+        <p>Faça seu logs</p>
       </div>
       <div class="form_title" v-else>
         <p>Registre sua conta</p>

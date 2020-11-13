@@ -1,5 +1,10 @@
 export default{
     TOGGLE_SIDEBAR(state) {
-        state.toggleSidebar = !state.toggleSidebar
+        if(state.toggleSidebar === "closed"){
+            state.toggleSidebar = "open";
+        }else{
+            state.toggleSidebar = "closed";
+        }
+        
     }
 }
