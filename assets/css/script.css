@@ -1,0 +1,16 @@
+body,p {
+    margin: 0px;
+}
+*{
+    font-family: 'Montserrat';
+    transition: all 0.25s ease;
+}
+*:focus{
+    outline: none;
+}
+
+* {
+    --primary: #288a8d;
+    --colorHover: #9bbdbe;
+    --white: #ffffff;
+  }
