@@ -20,10 +20,11 @@
           lat: location.geometry.location.lat,
           lng: location.geometry.location.lng,
         }"
-        @click="currentLocation = location"
       >
-        <GMapInfoWindow :options="{ maxWidth: 200 }">
+        <GMapInfoWindow :options="{ maxWidth: 300 }">
           <b>{{ location.name }}</b>
+          <br />
+          {{ location.vicinity }}
           <br />
           <button class="mapModal" @click="$store.dispatch('nav/toggleModal', location)">Ver mais</button>
         </GMapInfoWindow>
@@ -34,14 +35,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      placesLoad: false,
-      currentLocation: {},
-      locationsVisibleOnMap: "",
-      loading: false,
-    };
-  },
   props: {
     locationsList: {
       type: Array,

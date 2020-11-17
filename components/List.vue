@@ -1,5 +1,5 @@
 <template>
-  <div class="listSide" :class="isOpen">
+  <div class="listSide" :class="isOpen" >
     <div class="listHeader">
       <div class="listLogo">
           <img src="~/assets/img/hospital.png" alt="hospital-icon" />
@@ -22,9 +22,6 @@
         <ListElement :name="location.name" :location="location.vicinity" />
       </div>
     </div>
-    <Modal
-      @syncFav="checkLocal"
-    />
   </div>
 </template>
 
@@ -33,7 +30,6 @@ export default {
   data() {
     return {
       locations: this.locationsList,
-      userFav: [],
       filter: "all",
       filterActive: true
     };
@@ -43,6 +39,10 @@ export default {
       type: Array,
       required: true,
     },
+    userFav: {
+      type: Array,
+       required: true
+    }
   },
   methods: {
     filterLocations(payload){
@@ -55,15 +55,7 @@ export default {
     },
     handleModal(location) {
       this.$store.dispatch('nav/toggleModal', location);
-    },
-    checkLocal() {
-      if (this.$auth.$storage.getLocalStorage("FAV")) {
-        this.userFav = this.$auth.$storage.getLocalStorage("FAV");
-      }
-    },
-  },
-  mounted() {
-    this.checkLocal();
+    }
   },
   computed: {
     favCount(){

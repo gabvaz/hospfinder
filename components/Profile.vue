@@ -4,7 +4,8 @@
     <div v-if="acessLocation" class="contentArea">
       <div v-if="locationsLoaded">
           <Map :locationsList="locationsLoaded" :actualLat="lat" :actualLng="lng" />
-          <List :locationsList="locationsLoaded" />
+          <List :locationsList="locationsLoaded" :userFav="favList"/>
+          <Modal @syncFav="checkLocal"/>
       </div>
       <div class="loading" v-else>
         <img src="~/assets/img/spinner.gif" />
@@ -32,7 +33,8 @@ export default {
       userAvatar: "",
       lat: "",
       lng: "",
-      acessLocation: false
+      acessLocation: false,
+      favList: ["teste"]
     };
   },
   methods: {
@@ -61,10 +63,18 @@ export default {
         });
       }
     },
+    checkLocal() {
+      if (this.$auth.$storage.getLocalStorage("FAV")) {
+        this.favList = this.$auth.$storage.getLocalStorage("FAV");
+      }
+    }
   },
   created() {
     this.getData();
     this.getLocations();
+  },
+  mounted() {
+    this.checkLocal();
   },
   computed: {
     locationsLoaded() {
