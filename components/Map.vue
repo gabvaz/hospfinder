@@ -1,35 +1,35 @@
 <template>
-    <div class="mapParent">
-      <GMap
-        ref="gMap"
-        :center="{ lat: actualLat, lng: actualLng }"
-        :options="{
-          fullscreenControl: false,
-          streetViewControl: false,
-          mapTypeControl: false,
-          zoomControl: true,
-          gestureHandling: 'cooperative',
+  <div class="mapParent">
+    <GMap
+      ref="gMap"
+      :center="{ lat: actualLat, lng: actualLng }"
+      :options="{
+        fullscreenControl: false,
+        streetViewControl: false,
+        mapTypeControl: false,
+        zoomControl: true,
+        gestureHandling: 'cooperative',
+      }"
+      :zoom="12"
+      @bounds_changed="checkForMarkers"
+    >
+      <GMapMarker
+        v-for="location in locationsList"
+        :key="location.id"
+        :position="{
+          lat: location.geometry.location.lat,
+          lng: location.geometry.location.lng,
         }"
-        :zoom="12"
-        @bounds_changed="checkForMarkers"
+        @click="currentLocation = location"
       >
-        <GMapMarker
-          v-for="location in locationsList"
-          :key="location.id"
-          :position="{
-            lat: location.geometry.location.lat,
-            lng: location.geometry.location.lng,
-          }"
-          @click="currentLocation = location"
-        >
-          <GMapInfoWindow :options="{ maxWidth: 200 }">
-            <b>{{ location.name }}</b>
-            <br />
-            <code> {{ location.vicinity }}. </code>
-          </GMapInfoWindow>
-        </GMapMarker>
-      </GMap>
-    </div>
+        <GMapInfoWindow :options="{ maxWidth: 200 }">
+          <b>{{ location.name }}</b>
+          <br />
+          <button class="mapModal" @click="$store.dispatch('nav/toggleModal', location)">Ver mais</button>
+        </GMapInfoWindow>
+      </GMapMarker>
+    </GMap>
+  </div>
 </template>
 
 <script>
@@ -39,7 +39,7 @@ export default {
       placesLoad: false,
       currentLocation: {},
       locationsVisibleOnMap: "",
-      loading: false
+      loading: false,
     };
   },
   props: {
@@ -52,7 +52,7 @@ export default {
     },
     actualLng: {
       required: true,
-    }
+    },
   },
   methods: {
     checkForMarkers() {
@@ -61,8 +61,8 @@ export default {
           .getBounds()
           .contains(this.$refs.gMap.markers[i].getPosition());
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -70,7 +70,7 @@ export default {
 .GMap,
 .mapParent {
   height: calc(100vh - 111px);
-  width: 100%
+  width: 100%;
 }
 .GMap__Wrapper {
   height: 100%;
@@ -79,5 +79,16 @@ export default {
 .GMap__Wrapper > div,
 .GMap {
   height: 100% !important;
+}
+.mapModal {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.5rem 1rem 0.5625rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 150px;
+  background: transparent;
 }
 </style>
