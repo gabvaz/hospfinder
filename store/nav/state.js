@@ -1,3 +1,5 @@
 export default () => ({
-    toggleSidebar: "closed"
+    toggleSidebar: "closed",
+    toggleModal: "closed",
+    selectedLocation: []
   })

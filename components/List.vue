@@ -23,22 +23,15 @@
       </div>
     </div>
     <Modal
-      :modalOpen="modal"
-      :selectedLocation="selectedLocation"
-      @resetModal="handleModal({})"
       @syncFav="checkLocal"
     />
   </div>
 </template>
 
 <script>
-import ListElement from "~/components/ListElement.vue";
-import Modal from "~/components/Modal.vue";
 export default {
   data() {
     return {
-      selectedLocation: {},
-      modal: false,
       locations: this.locationsList,
       userFav: [],
       filter: "all",
@@ -61,8 +54,7 @@ export default {
         }
     },
     handleModal(location) {
-      this.modal = !this.modal;
-      this.selectedLocation = location;
+      this.$store.dispatch('nav/toggleModal', location);
     },
     checkLocal() {
       if (this.$auth.$storage.getLocalStorage("FAV")) {

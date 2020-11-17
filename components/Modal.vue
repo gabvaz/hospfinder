@@ -1,30 +1,30 @@
 <template>
-  <div class="modal-container">
-    <div v-if="modalOpen" class="modalBackdrop" @click="closeModal"></div>
+  <div class="modal-container" :class="modalStatus">
+    <div v-if="modalStatus == 'open'" class="modalBackdrop" @click="closeModal"></div>
     <transition name="show-modal">
-      <div v-if="modalOpen" class="modal">
+      <div v-if="modalStatus == 'open'" class="modal">
         <div class="modalContent">
           <span class="closeModal" @click="closeModal"><img src="~/assets/img/close.png"></span>
           <div class="locationInfo">
             <div class="modalHeader">
-              <p class="modalTitle">{{ selectedLocation.name }}</p>
+              <p class="modalTitle">{{ selectedLocationBeta.name }}</p>
               <div class="modalInfo">
                 <p>
-                  Avaliação média: <span>{{ selectedLocation.rating }}</span>
+                  Avaliação média: <span>{{ selectedLocationBeta.rating }}</span>
                 </p>
                 <div class="favArea">
                   <button
                     class="favBtn unfav"
-                    v-if="favorits.includes(selectedLocation.place_id)"
+                    v-if="favorits.includes(selectedLocationBeta.place_id)"
                     @click="
-                      removeFav(favorits.indexOf(selectedLocation.place_id))
+                      removeFav(favorits.indexOf(selectedLocationBeta.place_id))
                     "
                   >
                     Desfavoritar
                   </button>
                   <button
                     v-else
-                    @click="handleFav(selectedLocation.place_id)"
+                    @click="handleFav(selectedLocationBeta.place_id)"
                     class="favBtn fav"
                   >
                     Favoritar
@@ -77,7 +77,7 @@
                   <textarea v-model="singleReview"></textarea>
                 </div>
 
-                <button @click="createReview(selectedLocation.place_id)">
+                <button @click="createReview(selectedLocationBeta.place_id)">
                   Enviar Avaliação
                 </button>
               </div>
@@ -104,17 +104,8 @@ export default {
       ratingReview: "",
       modalBodyControl: true,
       modalBodyButton: "Avaliar",
+      selectedLocationBeta: {}
     };
-  },
-  props: {
-    modalOpen: {
-      type: Boolean,
-      required: true,
-    },
-    selectedLocation: {
-      type: Object,
-      required: true,
-    },
   },
   methods: {
     handleComent() {
@@ -169,7 +160,7 @@ export default {
     closeModal() {
       this.modalBodyControl = true;
       this.modalBodyButton = "Avaliar";
-      this.$emit("resetModal");
+      this.$store.dispatch('nav/toggleModal');
     },
     checkLocal() {
       if (this.$auth.$storage.getLocalStorage("FAV")) {
@@ -189,14 +180,18 @@ export default {
   computed: {
     filteredReviews() {
       return this.reviews.filter(
-        (review) => review.id === this.selectedLocation.place_id
+        (review) => review.id === this.selectedLocationBeta.place_id
       );
     },
     filteredCount() {
       return this.reviews.filter(
-        (review) => review.id === this.selectedLocation.place_id
+        (review) => review.id === this.selectedLocationBeta.place_id
       ).length;
     },
+    modalStatus() {
+      this.selectedLocationBeta = this.$store.getters["nav/selectedLocation"];
+      return this.$store.getters["nav/toggleModal"];
+    }
   },
 };
 </script>
