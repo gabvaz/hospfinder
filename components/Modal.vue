@@ -7,24 +7,24 @@
           <span class="closeModal" @click="closeModal"><img src="~/assets/img/close.png"></span>
           <div class="locationInfo">
             <div class="modalHeader">
-              <p class="modalTitle">{{ selectedLocationBeta.name }}</p>
+              <p class="modalTitle">{{ selectedLocation.name }}</p>
               <div class="modalInfo">
                 <p>
-                  Avaliação média: <span>{{ selectedLocationBeta.rating }}</span>
+                  Avaliação média: <span>{{ selectedLocation.rating }}</span>
                 </p>
                 <div class="favArea">
                   <button
                     class="favBtn unfav"
-                    v-if="favorits.includes(selectedLocationBeta.place_id)"
+                    v-if="favorits.includes(selectedLocation.place_id)"
                     @click="
-                      removeFav(favorits.indexOf(selectedLocationBeta.place_id))
+                      removeFav(favorits.indexOf(selectedLocation.place_id))
                     "
                   >
                     Desfavoritar
                   </button>
                   <button
                     v-else
-                    @click="handleFav(selectedLocationBeta.place_id)"
+                    @click="handleFav(selectedLocation.place_id)"
                     class="favBtn fav"
                   >
                     Favoritar
@@ -77,7 +77,7 @@
                   <textarea v-model="singleReview"></textarea>
                 </div>
 
-                <button @click="createReview(selectedLocationBeta.place_id)">
+                <button @click="createReview(selectedLocation.place_id)">
                   Enviar Avaliação
                 </button>
               </div>
@@ -104,7 +104,7 @@ export default {
       ratingReview: "",
       modalBodyControl: true,
       modalBodyButton: "Avaliar",
-      selectedLocationBeta: {}
+      selectedLocation: {}
     };
   },
   methods: {
@@ -180,16 +180,16 @@ export default {
   computed: {
     filteredReviews() {
       return this.reviews.filter(
-        (review) => review.id === this.selectedLocationBeta.place_id
+        (review) => review.id === this.selectedLocation.place_id
       );
     },
     filteredCount() {
       return this.reviews.filter(
-        (review) => review.id === this.selectedLocationBeta.place_id
+        (review) => review.id === this.selectedLocation.place_id
       ).length;
     },
     modalStatus() {
-      this.selectedLocationBeta = this.$store.getters["nav/selectedLocation"];
+      this.selectedLocation = this.$store.getters["nav/selectedLocation"];
       return this.$store.getters["nav/toggleModal"];
     }
   },
