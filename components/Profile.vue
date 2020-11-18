@@ -34,7 +34,7 @@ export default {
       lat: "",
       lng: "",
       acessLocation: false,
-      favList: ["teste"]
+      favList: []
     };
   },
   methods: {
