@@ -1,30 +1,27 @@
 <template>
   <section class="form_login">
     <div class="form_area">
-      <div class="form_title" v-if="login">
-        <p>Faça seu logs</p>
-      </div>
-      <div class="form_title" v-else>
-        <p>Registre sua conta</p>
+      <div class="form_title">
+        <p>{{ text }}</p>
       </div>
       <div class="form_body">
         <input type="email" placeholder="seu@email.com" v-model="email" />
         <input type="password" placeholder="senha" v-model="password" />
       </div>
-        <div class="form_footer" v-if="login">
-             <button @click="checkLogin">CONTINUAR</button>
-              <nuxtLink to="/registrar">Criar nova conta</nuxtLink>
-        </div>
-        <div class="form_footer" v-else>
-            <button @click="registerLogin">REGISTRAR</button>
-            <nuxtLink to="/">Fazer login</nuxtLink>
-        </div>  
+      <!-- poderia ser um componente -->
+      <div class="form_footer" v-if="login">
+        <button @click="checkLogin">CONTINUAR</button>
+        <nuxtLink to="/registrar">Criar nova conta</nuxtLink>
+      </div>
+      <div class="form_footer" v-else>
+        <button @click="registerLogin">REGISTRAR</button>
+        <nuxtLink to="/">Fazer login</nuxtLink>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -33,25 +30,29 @@ export default {
       logged: "",
     };
   },
-  props:{
+  props: {
     login: {
       type: Boolean,
-      required: true
-    }
+      requried: true,
+    },
+    text: {
+      type: String,
+      requried: true,
+    },
   },
   methods: {
     checkLogin() {
       this.$store.dispatch("authenticate/AUTHUSER", {
         email: this.email,
-        password: this.password
+        password: this.password,
       });
     },
-    registerLogin(){
+    registerLogin() {
       this.$store.dispatch("authenticate/REGISTER", {
         email: this.email,
-        password: this.password
+        password: this.password,
       });
-    }
+    },
   },
 };
 </script>
@@ -119,7 +120,7 @@ export default {
   color: var(--colorHover);
   text-decoration: underline;
 }
-.form_footer{
+.form_footer {
   display: flex;
   flex-direction: column;
 }

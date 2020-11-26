@@ -1,10 +1,15 @@
 <template>
-  <Form :login="false" />
+  <transition>
+    <Form :login="false" :text="loginText" />
+  </transition>
 </template>
 
-<script>
-import Form from '~/components/Form.vue'
+<script> 
 export default {
-
+  data(){
+    return{
+      loginText: 'Registrar'
+    }
+  }
 }
 </script>
